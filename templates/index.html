@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trackflix - Sua Biblioteca</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 30px;
+            background: rgba(26, 26, 46, 0.9);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 219, 222, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #8a8aff;
+            margin-bottom: 25px;
+        }
+        
+        /* Search */
+        .search-container {
+            max-width: 500px;
+            margin: 20px auto 30px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        #searchInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        #searchInput:focus {
+            outline: none;
+            border-color: #00dbde;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Add Movie Form */
+        .add-movie-form {
+            background: rgba(40, 40, 60, 0.7);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        
+        .add-movie-form h3 {
+            margin-bottom: 15px;
+            color: #00dbde;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.95rem;
+        }
+        
+        .form-grid textarea {
+            grid-column: 1 / -1;
+            min-height: 70px;
+            resize: vertical;
+        }
+        
+        .btn-add {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            padding: 12px;
+            margin-top: 10px;
+        }
+        
+        /* Test Buttons */
+        .test-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .test-btn {
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #8a8aff;
+            border: 1px solid rgba(138, 138, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .test-btn:hover {
+            background: rgba(138, 138, 255, 0.1);
+        }
+        
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+        }
+        
+        /* Movie Grid */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .movie-card {
+            background: rgba(40, 40, 60, 0.8);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .type-icon {
+            font-size: 1.3rem;
+        }
+        
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-badge.watched { background: rgba(0, 255, 0, 0.2); }
+        .status-badge.pending { background: rgba(255, 165, 0, 0.2); }
+        .status-badge.watching { background: rgba(0, 191, 255, 0.2); }
+        
+        .poster-container {
+            height: 300px;
+            overflow: hidden;
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .poster-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 3.5rem;
+        }
+        
+        .poster-placeholder span {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        .movie-title {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: white;
+        }
+        
+        .movie-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: #8a8aff;
+            font-size: 0.85rem;
+        }
+        
+        /* Rating */
+        .rating-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        .stars {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .star {
+            color: #444;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .star:hover,
+        .star.active {
+            color: #ffd700;
+        }
+        
+        .rating-value {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        /* Notes */
+        .notes {
+            margin: 12px 0;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+        
+        /* Actions */
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .btn-action {
+            flex: 1;
+            padding: 8px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+        }
+        
+        .btn-status {
+            background: rgba(0, 219, 222, 0.2);
+            border: 1px solid rgba(0, 219, 222, 0.3);
+        }
+        
+        .btn-delete {
+            width: 40px;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        
+        /* Results Header */
+        .results-header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 219, 222, 0.1);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 219, 222, 0.3);
+        }
+        
+        /* No Movies */
+        .no-movies {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px;
+            color: #888;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+                gap: 15px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-film"></i> Trackflix</h1>
+            <p class="subtitle">Sua biblioteca pessoal de filmes e séries</p>
+            
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Buscar filmes ou séries..." value="">
+                <button onclick="searchMovies()"><i class="fas fa-search"></i> Buscar</button>
+            </div>
+            
+            <div class="add-movie-form">
+                <h3><i class="fas fa-plus-circle"></i> Adicionar Novo</h3>
+                <div class="form-grid">
+                    <input type="text" id="movieTitle" placeholder="Título *" required>
+                    <input type="text" id="movieYear" placeholder="Ano">
+                    <select id="movieType">
+                        <option value="movie">🎬 Filme</option>
+                        <option value="series">📺 Série</option>
+                    </select>
+                    <input type="text" id="movieGenre" placeholder="Gênero">
+                    <input type="text" id="moviePoster" placeholder="URL da Imagem (opcional)">
+                    <textarea id="movieNotes" placeholder="Notas... (opcional)"></textarea>
+                    <button onclick="addMovie()" class="btn-add">
+                        <i class="fas fa-plus"></i> Adicionar
+                    </button>
+                </div>
+                
+                <div class="test-buttons">
+                    <button class="test-btn" onclick="addTestMovie()">
+                        <i class="fas fa-vial"></i> Adicionar Filme Teste
+                    </button>
+                    <button class="test-btn" onclick="testAPI()">
+                        <i class="fas fa-network-wired"></i> Testar API
+                    </button>
+                    <button class="test-btn" onclick="clearSearchAndFilters()">
+                        <i class="fas fa-times"></i> Limpar Tudo
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="filters">
+                <button onclick="filterMovies('all')" class="filter-btn active" data-status="all">Todos</button>
+                <button onclick="filterMovies('watched')" class="filter-btn" data-status="watched">✅ Assistidos</button>
+                <button onclick="filterMovies('pending')" class="filter-btn" data-status="pending">⏳ Pendentes</button>
+                <button onclick="filterMovies('watching')" class="filter-btn" data-status="watching">👁️ Assistindo</button>
+            </div>
+            
+            <div class="movie-grid" id="movieGrid">
+                <div class="no-movies">
+                    <i class="fas fa-film" style="font-size: 4rem; color: #666; margin-bottom: 20px;"></i>
+                    <h3>Carregando filmes...</h3>
+                    <p>Aguarde enquanto carregamos sua biblioteca.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Completo e Corrigido -->
+    <script>
+    console.log("✅ JavaScript da página principal carregado!");
+    
+    // ========== VARIÁVEIS GLOBAIS ==========
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let allMovies = [];
+    
+    // ========== FUNÇÕES PRINCIPAIS ==========
+    
+    // Função para adicionar filme
+    window.addMovie = async function() {
+        console.log("📝 Tentando adicionar filme...");
+        
+        const movieData = {
+            title: document.getElementById('movieTitle').value.trim(),
+            year: document.getElementById('movieYear').value.trim(),
+            type: document.getElementById('movieType').value,
+            genre: document.getElementById('movieGenre').value.trim(),
+            poster: document.getElementById('moviePoster').value.trim(),
+            notes: document.getElementById('movieNotes').value.trim()
+        };
+        
+        console.log("Dados do filme:", movieData);
+        
+        if (!movieData.title) {
+            alert('⚠️ Por favor, insira o título do filme/série');
+            document.getElementById('movieTitle').focus();
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/movies', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(movieData)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log("Resposta da API:", data);
+            
+            if (data.success) {
+                alert('✅ Filme adicionado com sucesso!');
+                // Limpa o formulário
+                document.getElementById('movieTitle').value = '';
+                document.getElementById('movieYear').value = '';
+                document.getElementById('movieGenre').value = '';
+                document.getElementById('moviePoster').value = '';
+                document.getElementById('movieNotes').value = '';
+                // Foca no título para próximo cadastro
+                document.getElementById('movieTitle').focus();
+                // Recarrega os filmes
+                setTimeout(() => {
+                    loadMovies();
+                }, 500);
+            } else {
+                alert('❌ Erro: ' + (data.error || 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro de conexão com o servidor. Verifique se o servidor está rodando.');
+        }
+    };
+    
+    // Função para avaliar filme
+    window.rateMovie = async function(movieId, rating) {
+        console.log(`⭐ Avaliando filme ${movieId} com ${rating} estrelas`);
+        
+        try {
+            const response = await fetch(`/api/movies/${movieId}/rating`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rating: rating })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log("Resposta da avaliação:", data);
+            
+            if (data.success) {
+                // Atualiza visualmente as estrelas
+                const stars = document.querySelectorAll(`[data-id="${movieId}"] .star`);
+                stars.forEach(star => {
+                    const starValue = parseInt(star.dataset.value);
+                    if (starValue <= rating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+                
+                // Atualiza o texto da avaliação
+                const ratingText = document.querySelector(`[data-id="${movieId}"] .rating-value`);
+                if (ratingText) {
+                    ratingText.textContent = `${rating}/5`;
+                }
+                
+                // Atualiza no array local
+                const movieIndex = allMovies.findIndex(m => m.id === movieId);
+                if (movieIndex !== -1) {
+                    allMovies[movieIndex].rating = rating;
+                }
+            } else {
+                alert('❌ Erro ao avaliar: ' + (data.error || 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro ao avaliar filme');
+        }
+    };
+    
+    // Função para mudar status
+    window.changeStatus = async function(movieId) {
+        console.log(`🔄 Mudando status do filme ${movieId}`);
+        
+        const card = document.querySelector(`[data-id="${movieId}"]`);
+        const currentStatus = card ? card.dataset.status : 'pending';
+        
+        // Ciclo: pending -> watching -> watched -> pending
+        const statusCycle = {
+            'pending': 'watching',
+            'watching': 'watched',
+            'watched': 'pending'
+        };
+        
+        const newStatus = statusCycle[currentStatus] || 'pending';
+        
+        console.log(`Status: ${currentStatus} -> ${newStatus}`);
+        
+        try {
+            const response = await fetch(`/api/movies/${movieId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log("Resposta do status:", data);
+            
+            if (data.success) {
+                // Atualiza no array local
+                const movieIndex = allMovies.findIndex(m => m.id === movieId);
+                if (movieIndex !== -1) {
+                    allMovies[movieIndex].status = newStatus;
+                }
+                
+                // Reaplica o filtro atual
+                applyCurrentFilterAndSearch();
+            } else {
+                alert('❌ Erro: ' + (data.error || 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro ao mudar status');
+        }
+    };
+    
+    // Função para deletar filme
+    window.deleteMovie = async function(movieId) {
+        console.log(`🗑️ Tentando deletar filme ${movieId}`);
+        
+        if (!confirm('⚠️ Tem certeza que deseja excluir este filme/série?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/movies/${movieId}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log("Resposta da exclusão:", data);
+            
+            if (data.success) {
+                // Remove do array local
+                allMovies = allMovies.filter(m => m.id !== movieId);
+                
+                // Reaplica o filtro atual
+                applyCurrentFilterAndSearch();
+                
+                alert('✅ Filme excluído com sucesso!');
+            } else {
+                alert('❌ Erro: ' + (data.error || 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro ao excluir filme');
+        }
+    };
+    
+    // Função para buscar filmes
+    window.searchMovies = async function() {
+        const query = document.getElementById('searchInput').value.trim();
+        console.log(`🔍 Buscando: "${query}"`);
+        
+        currentSearch = query;
+        
+        try {
+            const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            
+            const movies = await response.json();
+            allMovies = Array.isArray(movies) ? movies : [];
+            
+            // Aplica o filtro atual nos resultados da busca
+            applyCurrentFilterAndSearch();
+            
+        } catch (error) {
+            console.error('Erro na busca:', error);
+            alert('❌ Erro ao buscar filmes');
+            showErrorMessage('Erro ao buscar filmes');
+        }
+    };
+    
+    // Função para filtrar filmes - CORRIGIDA
+    window.filterMovies = function(status, event) {
+        console.log(`🎯 Filtrando por: ${status}`);
+        
+        // Se o primeiro parâmetro for um evento (chamada incorreta), extraímos o status
+        if (status && status.target) {
+            event = status;
+            status = event.target.getAttribute('data-status') || 'all';
+        }
+        
+        currentFilter = status;
+        
+        // Atualiza botões ativos
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-status') === status) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Aplica o filtro e busca atual
+        applyCurrentFilterAndSearch();
+    };
+    
+    // Função para limpar a busca
+    window.clearSearch = function() {
+        document.getElementById('searchInput').value = '';
+        currentSearch = '';
+        applyCurrentFilterAndSearch();
+    };
+    
+    // ========== FUNÇÕES AUXILIARES ==========
+    
+    // Função para carregar todos os filmes
+    function loadMovies() {
+        const searchQuery = currentSearch || '';
+        
+        fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(movies => {
+                allMovies = Array.isArray(movies) ? movies : [];
+                applyCurrentFilterAndSearch();
+            })
+            .catch(error => {
+                console.error('Erro ao carregar filmes:', error);
+                showErrorMessage('Erro ao carregar filmes');
+            });
+    }
+    
+    // Função para aplicar filtro e busca
+    function applyCurrentFilterAndSearch() {
+        let filteredMovies = [...allMovies];
+        
+        // Aplica busca se houver
+        if (currentSearch) {
+            const searchLower = currentSearch.toLowerCase();
+            filteredMovies = filteredMovies.filter(movie => 
+                movie.title && movie.title.toLowerCase().includes(searchLower) ||
+                movie.genre && movie.genre.toLowerCase().includes(searchLower) ||
+                movie.notes && movie.notes.toLowerCase().includes(searchLower)
+            );
+        }
+        
+        // Aplica filtro se não for 'all'
+        if (currentFilter !== 'all') {
+            filteredMovies = filteredMovies.filter(movie => movie.status === currentFilter);
+        }
+        
+        // Atualiza a grade de filmes
+        updateMovieGrid(filteredMovies);
+    }
+    
+    // Função para atualizar a grade de filmes
+    function updateMovieGrid(movies) {
+        const movieGrid = document.getElementById('movieGrid');
+        
+        if (!movieGrid) {
+            console.error('Elemento #movieGrid não encontrado');
+            return;
+        }
+        
+        if (!Array.isArray(movies) || movies.length === 0) {
+            let message = 'Nenhum filme ou série cadastrado';
+            let icon = 'fa-film';
+            let subtitle = 'Comece adicionando seu primeiro filme ou série!';
+            
+            if (currentSearch && currentFilter !== 'all') {
+                message = `Nenhum resultado para "${currentSearch}" com filtro "${getFilterName(currentFilter)}"`;
+                icon = 'fa-search';
+                subtitle = 'Tente buscar por outro título ou gênero, ou mude o filtro.';
+            } else if (currentSearch) {
+                message = `Nenhum resultado encontrado para "${currentSearch}"`;
+                icon = 'fa-search';
+                subtitle = 'Tente buscar por outro título ou gênero.';
+            } else if (currentFilter !== 'all') {
+                message = `Nenhum filme com status "${getFilterName(currentFilter)}"`;
+                icon = 'fa-filter';
+                subtitle = 'Tente mudar o filtro ou adicionar novos filmes.';
+            }
+            
+            movieGrid.innerHTML = `
+                <div class="no-movies">
+                    <i class="fas ${icon}" style="font-size: 4rem; color: #666; margin-bottom: 20px;"></i>
+                    <h3>${message}</h3>
+                    <p>${subtitle}</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Constrói os cards dos filmes
+        let moviesHTML = '';
+        
+        movies.forEach(movie => {
+            let statusEmoji = '';
+            let statusClass = movie.status || 'pending';
+            
+            switch(statusClass) {
+                case 'watched': statusEmoji = '✅'; break;
+                case 'pending': statusEmoji = '⏳'; break;
+                case 'watching': statusEmoji = '👁️'; break;
+            }
+            
+            let typeEmoji = movie.type === 'movie' ? '🎬' : '📺';
+            
+            // Constrói as estrelas
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const activeClass = i <= (movie.rating || 0) ? 'active' : '';
+                starsHTML += `<i class="fas fa-star star ${activeClass}" 
+                                 data-value="${i}"
+                                 onclick="rateMovie(${movie.id}, ${i})"></i>`;
+            }
+            
+            // Constrói o card completo
+            moviesHTML += `
+                <div class="movie-card" data-id="${movie.id}" data-status="${movie.status}">
+                    <div class="card-header">
+                        <span class="type-icon">${typeEmoji}</span>
+                        <span class="status-badge ${movie.status}">${statusEmoji}</span>
+                    </div>
+                    
+                    <div class="poster-container">
+                        ${movie.poster ? 
+                            `<img src="${movie.poster}" alt="${movie.title}" class="movie-poster" 
+                                  onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"450\" viewBox=\"0 0 300 450\"><rect width=\"300\" height=\"450\" fill=\"%231a1a2e\"/><text x=\"150\" y=\"225\" font-family=\"Arial\" font-size=\"20\" fill=\"%23888\" text-anchor=\"middle\">Sem Imagem</text></svg>'">` :
+                            `<div class="poster-placeholder">
+                                <i class="fas fa-film"></i>
+                                <span>${movie.type === 'movie' ? 'FILME' : 'SÉRIE'}</span>
+                            </div>`
+                        }
+                    </div>
+                    
+                    <div class="card-body">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-meta">
+                            <span class="year">${movie.year || 'N/A'}</span>
+                            <span class="genre">${movie.genre || 'Sem gênero'}</span>
+                        </div>
+                        
+                        <div class="rating-section">
+                            <div class="stars" data-id="${movie.id}">
+                                ${starsHTML}
+                            </div>
+                            <span class="rating-value">${movie.rating || 0}/5</span>
+                        </div>
+                        
+                        ${movie.notes ? `
+                            <div class="notes">
+                                <p>${movie.notes.substring(0, 80)}${movie.notes.length > 80 ? '...' : ''}</p>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="card-actions">
+                            <button class="btn-action btn-status" onclick="changeStatus(${movie.id})">
+                                <i class="fas fa-sync-alt"></i> Status
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deleteMovie(${movie.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        // Adiciona um cabeçalho se for uma busca ou filtro especial
+        let headerHTML = '';
+        
+        if (currentSearch || currentFilter !== 'all') {
+            let headerMessage = '';
+            
+            if (currentSearch && currentFilter !== 'all') {
+                headerMessage = `🔍 "${currentSearch}" • 🎯 ${getFilterName(currentFilter)}`;
+            } else if (currentSearch) {
+                headerMessage = `🔍 Busca: "${currentSearch}"`;
+            } else if (currentFilter !== 'all') {
+                headerMessage = `🎯 Filtro: ${getFilterName(currentFilter)}`;
+            }
+            
+            headerHTML = `
+                <div class="results-header">
+                    <h3 style="color: #00dbde; margin-bottom: 5px;">
+                        <i class="fas ${currentSearch ? 'fa-search' : 'fa-filter'}"></i>
+                        ${currentSearch && currentFilter !== 'all' ? 'Resultados Filtrados' : 
+                          currentSearch ? 'Resultados da Busca' : 'Filmes Filtrados'}
+                    </h3>
+                    <p style="color: #8a8aff; margin-bottom: 10px;">
+                        ${headerMessage}
+                        <br>
+                        <small>Encontrados: <strong>${movies.length}</strong> filme(s)</small>
+                    </p>
+                    <button onclick="clearSearchAndFilters()" style="
+                        padding: 8px 15px;
+                        background: rgba(255, 255, 255, 0.1);
+                        color: white;
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                        border-radius: 5px;
+                        cursor: pointer;
+                        font-size: 0.9rem;
+                    ">
+                        <i class="fas fa-times"></i> Limpar tudo
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Atualiza a grade
+        movieGrid.innerHTML = headerHTML + moviesHTML;
+    }
+    
+    // Função para limpar busca e filtros
+    window.clearSearchAndFilters = function() {
+        document.getElementById('searchInput').value = '';
+        currentSearch = '';
+        currentFilter = 'all';
+        
+        // Atualiza botões ativos
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector('.filter-btn[data-status="all"]').classList.add('active');
+        
+        // Carrega todos os filmes
+        loadMovies();
+    };
+    
+    // Função para obter nome do filtro
+    function getFilterName(filter) {
+        const filterNames = {
+            'all': 'Todos',
+            'watched': 'Assistidos',
+            'pending': 'Pendentes',
+            'watching': 'Assistindo'
+        };
+        return filterNames[filter] || filter;
+    }
+    
+    // Função para mostrar mensagem de erro
+    function showErrorMessage(message) {
+        const movieGrid = document.getElementById('movieGrid');
+        movieGrid.innerHTML = `
+            <div class="no-movies" style="color: #ff4444;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                <h3>Erro ao carregar filmes</h3>
+                <p>${message}</p>
+                <button onclick="loadMovies()" style="margin-top: 10px; padding: 10px 20px;">
+                    <i class="fas fa-redo"></i> Tentar novamente
+                </button>
+            </div>
+        `;
+    }
+    
+    // ========== EVENT LISTENERS ==========
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("🚀 Página principal carregada!");
+        
+        // Busca ao pressionar Enter
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchMovies();
+            }
+        });
+        
+        // Adiciona ao pressionar Enter no título
+        document.getElementById('movieTitle').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addMovie();
+            }
+        });
+        
+        // Carrega todos os filmes inicialmente
+        loadMovies();
+        
+        // Teste rápido das funções
+        console.log("✅ Funções disponíveis:");
+        console.log("- addMovie:", typeof window.addMovie);
+        console.log("- rateMovie:", typeof window.rateMovie);
+        console.log("- changeStatus:", typeof window.changeStatus);
+        console.log("- deleteMovie:", typeof window.deleteMovie);
+        console.log("- searchMovies:", typeof window.searchMovies);
+        console.log("- filterMovies:", typeof window.filterMovies);
+        console.log("- clearSearch:", typeof window.clearSearch);
+        console.log("- clearSearchAndFilters:", typeof window.clearSearchAndFilters);
+    });
+    
+    // ========== TESTE RÁPIDO NO CONSOLE ==========
+    
+    // Teste direto no console
+    window.testAPI = function() {
+        fetch('/api/test')
+            .then(r => {
+                if (!r.ok) throw new Error(`Erro HTTP: ${r.status}`);
+                return r.json();
+            })
+            .then(data => console.log("✅ Teste API:", data))
+            .catch(err => console.error("❌ Erro API:", err));
+    };
+    
+    // Função para adicionar filme de teste
+    window.addTestMovie = function() {
+        const testData = {
+            title: "Filme Teste " + new Date().toLocaleTimeString(),
+            year: "2024",
+            type: "movie",
+            genre: "Ação",
+            notes: "Este é um filme de teste adicionado automaticamente"
+        };
+        
+        fetch('/api/movies', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(testData)
+        })
+        .then(r => {
+            if (!r.ok) throw new Error(`Erro HTTP: ${r.status}`);
+            return r.json();
+        })
+        .then(data => {
+            console.log("✅ Filme teste adicionado:", data);
+            if (data.success) {
+                loadMovies();
+            }
+        })
+        .catch(err => console.error("❌ Erro:", err));
+    };
+    
+    console.log("🔧 Comandos disponíveis no console:");
+    console.log("- testAPI() - Testa a API");
+    console.log("- addTestMovie() - Adiciona filme de teste");
+    console.log("- loadMovies() - Recarrega filmes");
+    </script>
+    
+</body>
+</html>

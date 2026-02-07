@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "title": "Hary Potter e a Pedra Filosofal",
+    "year": "2001",
+    "type": "movie",
+    "poster": "https://pt.wikipedia.org/wiki/Harry_Potter_e_a_Pedra_Filosofal_%28filme%29",
+    "genre": "Fantasia",
+    "status": "watched",
+    "rating": 5,
+    "notes": "Muito bom!",
+    "date_added": "2026-02-07 11:12:37",
+    "last_updated": "2026-02-07 11:12:53"
+  },
+  {
+    "id": 2,
+    "title": "Diario de um Vampiro",
+    "year": "2010",
+    "type": "series",
+    "poster": "https://upload.wikimedia.org/wikipedia/pt/b/b3/Sem_t%C3%ADtulo-1_c%C3%B3pia.jpg",
+    "genre": "Drama",
+    "status": "pending",
+    "rating": 4,
+    "notes": "Ótimo!",
+    "date_added": "2026-02-07 11:16:55",
+    "last_updated": "2026-02-07 11:17:05"
+  }
+]

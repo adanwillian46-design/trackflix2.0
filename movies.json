@@ -1,0 +1,40 @@
+[
+  {
+    "id": 2,
+    "title": "Tudo em Todo Lugar ao Mesmo Tempo",
+    "year": "2014",
+    "type": "movie",
+    "poster": "https://m.media-amazon.com/images/I/717jhKXeSrL._AC_UF1000,1000_QL80_.jpg",
+    "genre": "Ficção Científica",
+    "status": "watched",
+    "rating": 5,
+    "notes": "Ótimo!",
+    "date_added": "2026-02-07 13:19:53",
+    "last_updated": "2026-02-07 13:20:00"
+  },
+  {
+    "id": 3,
+    "title": "Interestelar",
+    "year": "2014",
+    "type": "movie",
+    "poster": "https://upload.wikimedia.org/wikipedia/pt/thumb/3/3a/Interstellar_Filme.png/250px-Interstellar_Filme.png",
+    "genre": "Ficção Científica",
+    "status": "watched",
+    "rating": 5,
+    "notes": "Incrivel",
+    "date_added": "2026-02-07 13:43:21",
+    "last_updated": "2026-02-07 13:43:30"
+  },
+  {
+    "id": 4,
+    "title": "Diario de um Vampiro",
+    "year": "2009",
+    "type": "series",
+    "poster": "https://upload.wikimedia.org/wikipedia/pt/thumb/a/a1/The_Vampire_Diaries_Season_5_Poster.jpg/250px-The_Vampire_Diaries_Season_5_Poster.jpg",
+    "genre": "Drama",
+    "status": "watching",
+    "rating": 0,
+    "notes": "Muito boa, estou gostando.",
+    "date_added": "2026-02-07 14:11:29"
+  }
+]
